@@ -1,0 +1,9 @@
+appsettings.json
+bin
+obj
+.vs
+.vscode
+Plugins
+ExamQuestions
+PublishProfiles
+.config/dotnet-tools.json
