@@ -1,0 +1,6 @@
+using Discord.Commands;
+
+public class GifModule : ModuleBase<SocketCommandContext>
+{
+    
+}
