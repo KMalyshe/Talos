@@ -1,4 +1,5 @@
 using Discord.Commands;
+using Discord.WebSocket;
 
 public class InfoModule : ModuleBase<SocketCommandContext>
 {
@@ -15,5 +16,17 @@ public class InfoModule : ModuleBase<SocketCommandContext>
 		int num)
 	{
 		await Context.Channel.SendMessageAsync($"{num}^2 = {Math.Pow(num, 2)}");
+	}
+
+	[Command("userinfo")]
+	[Summary
+	("Returns user info")]
+	[Alias("user", "whois")]
+	public async Task UserInfoAsync(
+		[Summary("The (optional) user to get info from")]
+		SocketUser? user = null)
+	{
+		var userInfo = user ?? Context.Client.CurrentUser;
+		await ReplyAsync($"{userInfo.Username}#{userInfo.Discriminator}");
 	}
 }
