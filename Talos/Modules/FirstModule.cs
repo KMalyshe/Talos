@@ -17,6 +17,15 @@ public class InfoModule : ModuleBase<SocketCommandContext>
 	{
 		await Context.Channel.SendMessageAsync($"{num}^2 = {Math.Pow(num, 2)}");
 	}
+	// divide a number by 2
+	[Command("half")]
+	[Summary("Divides a number by 2.")]
+	public async Task HalfAsync(
+		[Summary("The number to square.")] 
+		int num)
+	{
+		await Context.Channel.SendMessageAsync($"{num}/2 = " + num/2);
+	}
 
 	[Command("userinfo")]
 	[Summary
