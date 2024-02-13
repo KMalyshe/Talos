@@ -5,7 +5,7 @@ using Discord.WebSocket;
 public class BotMainframe
 {
     public static Task Main(string[] args) => new BotMainframe().MainAsync();
-    private DiscordSocketClient client;
+    private DiscordSocketClient? client;
 	public async Task MainAsync()
 	{
         client = new DiscordSocketClient();
