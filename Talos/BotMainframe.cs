@@ -13,11 +13,16 @@ namespace TalosBot
         private DiscordSocketClient _client;
         private CommandService _commands;
         private IServiceProvider _services;
-
+        
         public async Task RunBotAsync()
         {
-            _client = new DiscordSocketClient();
+            var config = new DiscordSocketConfig
+            {
+            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+            };
+            _client = new DiscordSocketClient(config);
             _commands = new CommandService();
+            
 
             _services = new ServiceCollection()
                 .AddSingleton(_client)
