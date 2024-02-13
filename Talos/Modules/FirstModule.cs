@@ -5,6 +5,8 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Text.Json;
 using System.Collections.Generic;
+using Discord.WebSocket;
+using System.Security.Cryptography;
 
 namespace TalosBot.Modules
 {
@@ -50,6 +52,39 @@ namespace TalosBot.Modules
                     
                 }
                 else await ReplyAsync("Sorry! An error has occured. Please try again.");
+            }
+        }
+        [Command ("userinfo")]
+        [Alias ("whois", "user")]
+
+        public async Task UserInfo (SocketUser user = null)
+        {
+            var userinfo = user ?? Context.Client.CurrentUser;
+            await ReplyAsync("Username: " + userinfo.Username + "\nDate created: " + userinfo.CreatedAt);
+        }
+
+        [Command ("roll")]
+
+        public async Task Roll(string dice)
+        {
+            var diceroll = dice.Split("d");
+            var total = 0;
+            List<int> numbers = new List<int>();
+            if (diceroll.Count() != 2) await ReplyAsync("Invalid Roll. Format: XdY, X and Y being integers.");
+            else if (!diceroll[0].All(c => c >= '0' && c <= '9') || !diceroll[1].All(c => c >= '0' && c <= '9')) await ReplyAsync("Invalid Roll. Format: XdY, X and Y being integers.");
+            else
+            {
+                for (int i = 0; i<Int32.Parse(diceroll[0]); i++)
+                {
+                    Random rng = new Random();
+                    var randomnumber = rng.Next(Int32.Parse(diceroll[1])) + 1;
+                    numbers.Add(randomnumber);
+                    total += randomnumber;
+                }
+                string response = "You rolled a " + total + ". Your individual rolls were: " + string.Join(", ", numbers);
+                if (numbers.Contains(1)) response += "\nNice nat 1, bozo";
+                if (numbers.Contains(Int32.Parse(diceroll[1]))) response += "\nYou crit for once?";
+                await ReplyAsync(response);
             }
         }
     }
