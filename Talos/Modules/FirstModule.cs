@@ -1,7 +1,7 @@
 using Discord;
 using Discord.Commands;
 
-namespace TutorialBot.Modules
+namespace TalosBot.Modules
 {
     public class Commands : ModuleBase<SocketCommandContext>
     {
