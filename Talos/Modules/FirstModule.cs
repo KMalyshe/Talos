@@ -10,5 +10,10 @@ namespace TalosBot.Modules
         {
             await ReplyAsync("pong");
         }
+        [Command("double")]
+        public async Task Double(long num)
+        {
+            await Context.Channel.SendMessageAsync("You entered: " + num + ". Your number doubled equals " + num*2 + ".");
+        }
     }
 }
