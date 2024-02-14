@@ -72,6 +72,8 @@ namespace TalosBot.Modules
             List<int> numbers = new List<int>();
             if (diceroll.Count() != 2) await ReplyAsync("Invalid Roll. Format: XdY, X and Y being integers.");
             else if (!diceroll[0].All(c => c >= '0' && c <= '9') || !diceroll[1].All(c => c >= '0' && c <= '9')) await ReplyAsync("Invalid Roll. Format: XdY, X and Y being integers.");
+            else if ((long.Parse(diceroll[0]) > 2147483647) || (long.Parse(diceroll[0]) > 2147483647)) await ReplyAsync("Rolls too large. Integer limit: 2147483647");
+            else if ((long.Parse(diceroll[0]) < 0) || (long.Parse(diceroll[1]) < 0)) await ReplyAsync("Cannot roll negative dice.");
             else
             {
                 for (int i = 0; i<Int32.Parse(diceroll[0]); i++)
