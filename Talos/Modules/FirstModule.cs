@@ -89,5 +89,12 @@ namespace TalosBot.Modules
                 await ReplyAsync(response);
             }
         }
+
+        [Command ("shutdown")]
+
+        public async Task shutDown()
+        {
+            await ReplyAsync("Shutting down.");
+        }
     }
 }
