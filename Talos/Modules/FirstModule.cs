@@ -30,7 +30,8 @@ namespace TalosBot.Modules
         public async Task catPosting()
         {
             Random rng = new Random();
-            string[] searchOptions = ["cat-" + (char) (65 + rng.Next(25)), "this-cat-is-so", "cat-eepy", "cat-caption", "cat", "cat-goofy", "cat-voices", "cat-crazy", "cat-stare", "but-heres-the", "cat-angry"];
+            string[] searchOptions = ["cat-" + (char) (65 + rng.Next(25)), "this-cat-is-so", "cat-eepy", "cat-caption", "cat", "cat-goofy", "cat-voices", "cat-crazy", "cat-stare", "but-heres-the", "cat-angry",
+            "orange-cat", "cat-meme", "cat-punch", "cat-smack"];
             string actualSearch = searchOptions[rng.Next(searchOptions.Length)];
             var url = "https://tenor.googleapis.com/v2/search?q=" + actualSearch + "&key=" + File.ReadAllText(@"C:\TalosFiles\tenortoken.txt") + "&client_key=talosbot&limit=10&media_filter=gif,tinygif";
             using (var client = new HttpClient())
