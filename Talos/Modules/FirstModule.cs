@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Collections.Generic;
 using Discord.WebSocket;
 using System.Security.Cryptography;
+using System.Windows.Input;
 
 namespace TalosBot.Modules
 {
@@ -27,12 +28,13 @@ namespace TalosBot.Modules
             public string url { get; set; }
         }
         [Command("cat")]
-        public async Task catPosting()
+        public async Task catPosting(SocketUser user = null)
         {
             Random rng = new Random();
             string[] searchOptions = ["cat-" + (char) (65 + rng.Next(25)), "this-cat-is-so", "cat-eepy", "cat-caption", "cat", "cat-goofy", "cat-voices", "cat-crazy", "cat-stare", "but-heres-the", "cat-angry",
             "orange-cat", "cat-meme", "cat-punch", "cat-smack", "cat-slap", "cat-crime"];
-            string actualSearch = searchOptions[rng.Next(searchOptions.Length)];
+            var searchOptionChosen = rng.Next(searchOptions.Length);
+            string actualSearch = searchOptions[searchOptionChosen];
             var url = "https://tenor.googleapis.com/v2/search?q=" + actualSearch + "&key=" + File.ReadAllText(@"C:\TalosFiles\tenortoken.txt") + "&client_key=talosbot&limit=10&media_filter=gif,tinygif";
             using (var client = new HttpClient())
             {
@@ -49,7 +51,11 @@ namespace TalosBot.Modules
                         UrlResult urlResult = result.ToObject<UrlResult>();
                         urlResults.Add(urlResult);
                     }
-                    await ReplyAsync(urlResults[rng.Next(urlResults.Count)].url);
+                    if (user == null) user = Context.User;
+                    var resultOptionChosen = rng.Next(urlResults.Count);
+                    await File.AppendAllTextAsync(@"C:\TalosFiles\catlog.txt", DateTime.Now + " " + user.Username + 
+                    ": Search Option: " + searchOptions[searchOptionChosen] + " Result Option: " + resultOptionChosen + Environment.NewLine);
+                    await ReplyAsync(urlResults[resultOptionChosen].url);
                     
                     
                 }

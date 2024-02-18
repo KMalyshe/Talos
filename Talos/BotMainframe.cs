@@ -22,6 +22,7 @@ namespace TalosBot
             };
             _client = new DiscordSocketClient(config);
             _commands = new CommandService();
+            _client.MessageReceived += MessageReceived;
             
 
             _services = new ServiceCollection()
@@ -53,6 +54,13 @@ namespace TalosBot
         {
             _client.MessageReceived += HandleCommandAsync;
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+        }
+        private async Task MessageReceived(SocketMessage message)
+        {
+            if (message.Content == "!cat")
+            {
+                //await message.Channel.SendMessageAsync("Hello!");
+            }
         }
 
         private async Task HandleCommandAsync(SocketMessage arg)

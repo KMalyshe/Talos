@@ -11,5 +11,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.1.24080.9"/>
     <PackageReference Include="System.Net.Http" Version="4.3.4"/>
     <PackageReference Include="Json.Net" Version="1.0.33"/>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0-preview.1.24081.2"/>
   </ItemGroup>
 </Project>
