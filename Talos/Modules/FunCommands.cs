@@ -1,3 +1,4 @@
+using Discord;
 using Discord.Commands;
 
 namespace TalosBot.Modules
@@ -28,7 +29,11 @@ namespace TalosBot.Modules
                     reply = fetch.Remove(fetch.Length-2);
                 }
             }
-            await ReplyAsync(reply);
+
+            var embed = new EmbedBuilder();
+            embed.AddField("The ball's infinite wisdom proclaims the answer.", reply)
+            .WithCurrentTimestamp();
+            await ReplyAsync(embed: embed.Build());
         }
     }
 }

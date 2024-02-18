@@ -31,11 +31,17 @@ namespace TalosBot.Modules
         public async Task catPosting(SocketUser user = null)
         {
             Random rng = new Random();
-            string[] searchOptions = ["cat-" + (char) (65 + rng.Next(25)), "this-cat-is-so", "cat-eepy", "cat-caption", "cat", "cat-goofy", "cat-voices", "cat-crazy", "cat-stare", "but-heres-the", "cat-angry",
+            // List of search options
+            string[] searchOptions = ["cat-" + (char) (65 + rng.Next(25)), "this-cat-is-so", "cat-eepy", "cat-caption", "cat", "cat-goofy", "cat-voices", 
+            "cat-crazy", "cat-stare", "but-heres-the", "cat-angry",
             "orange-cat", "cat-meme", "cat-punch", "cat-smack", "cat-slap", "cat-crime"];
+
             var searchOptionChosen = rng.Next(searchOptions.Length);
             string actualSearch = searchOptions[searchOptionChosen];
-            var url = "https://tenor.googleapis.com/v2/search?q=" + actualSearch + "&key=" + File.ReadAllText(@"C:\TalosFiles\tenortoken.txt") + "&client_key=talosbot&limit=10&media_filter=gif,tinygif";
+            var url = "https://tenor.googleapis.com/v2/search?q=" + actualSearch + "&key=" + 
+            File.ReadAllText(@"C:\TalosFiles\tenortoken.txt") + "&client_key=talosbot&limit=10&media_filter=gif,tinygif";
+
+            
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(url);
