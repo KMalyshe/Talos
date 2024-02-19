@@ -34,7 +34,8 @@ namespace TalosBot.Modules
             // List of search options
             string[] searchOptions = ["cat-" + (char) (65 + rng.Next(25)), "this-cat-is-so", "cat-eepy", "cat-caption", "cat", "cat-goofy", "cat-voices", 
             "cat-crazy", "cat-stare", "but-heres-the", "cat-angry",
-            "orange-cat", "cat-meme", "cat-punch", "cat-smack", "cat-slap", "cat-crime"];
+            "orange-cat", "cat-meme", "cat-punch", "cat-smack", "cat-slap", "cat-crime",
+            "angry-kitten", "cat-kitten", "cat-dance", "cat- meme", "cat-skateboard", "cat-drive", "cat-meow"];
 
             var searchOptionChosen = rng.Next(searchOptions.Length);
             string actualSearch = searchOptions[searchOptionChosen];
