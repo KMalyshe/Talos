@@ -28,7 +28,7 @@ namespace TalosBot.Modules
             public string url { get; set; }
         }
         [Command("cat")]
-        public async Task catPosting(SocketUser user = null, params string[] args)
+        public async Task catPosting(SocketUser user = null)
         {
             Random rng = new Random();
             // List of search options
