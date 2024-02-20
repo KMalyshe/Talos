@@ -128,7 +128,7 @@ namespace TalosBot.Modules
                 };
                 for (int i = 0; i<5; i++)
                 {
-                    embed.AddField("Tier " + i + " Fish:", fishDict[i] + fishAmounts[i].ToString() + "**");
+                    embed.AddField("Tier " + (i+1) + " Fish:", fishDict[i] + fishAmounts[i].ToString() + "**");
                 }
                 embed.AddField("Total Fish Accrued:", "**" + fishAmounts.Sum() + "**").WithColor(Color.Blue);
                 await ReplyAsync(embed: embed.Build());
