@@ -80,7 +80,7 @@ namespace TalosBot.Modules
                 @"
                 INSERT OR IGNORE INTO UserCollection(USERID, T1FISH, T2FISH, T3FISH, T4FISH, T5FISH) VALUES($name, 0, 0, 0, 0, 0)
                 ";
-                command.Parameters.AddWithValue("$name", user.Username);
+                command.Parameters.AddWithValue("$name", user.Id.ToString());
                 command.ExecuteNonQuery();
 
                 command.CommandText =
@@ -89,7 +89,7 @@ namespace TalosBot.Modules
                 SET {fishcaught} = {fishcaught} + 1
                 WHERE USERID = @name
                 ";
-                command.Parameters.AddWithValue("@name", user.Username);
+                command.Parameters.AddWithValue("@name", user.Id.ToString());
                 command.ExecuteNonQuery();
 
             }
@@ -108,7 +108,7 @@ namespace TalosBot.Modules
                 var command = connection.CreateCommand();
                 var userinfo = user ?? Context.User;
                 command.CommandText = @"SELECT T1FISH, T2FISH, T3FISH, T4FISH, T5FISH FROM UserCollection WHERE USERID = $name;";
-                command.Parameters.AddWithValue("$name", userinfo.Username);
+                command.Parameters.AddWithValue("$name", userinfo.Id.ToString());
                 SqliteDataReader reader = command.ExecuteReader();
                 if (reader.Read()) {
                     fishAmounts.Add(Convert.ToInt32(reader[0]));
