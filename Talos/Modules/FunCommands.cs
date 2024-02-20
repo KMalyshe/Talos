@@ -93,6 +93,7 @@ namespace TalosBot.Modules
                 command.ExecuteNonQuery();
 
             }
+            await File.AppendAllTextAsync(@"C:\TalosFiles\fishlog.txt", user.Username + " caught a " + fishcaught + " at " + DateTime.Now + "." + Environment.NewLine);
         }
 
         [Command ("fishcollection")]
