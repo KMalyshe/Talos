@@ -18,7 +18,7 @@ namespace TalosBot
         {
             var config = new DiscordSocketConfig
             {
-            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent | GatewayIntents.GuildMembers | GatewayIntents.GuildPresences
             };
             _client = new DiscordSocketClient(config);
             _commands = new CommandService();

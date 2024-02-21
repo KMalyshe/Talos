@@ -26,7 +26,8 @@ namespace TalosBot.Modules
                 reply += char.ToUpper(word.First()) + word.Substring(1).ToLower() + "_";
             }
             if (reply.Last() == '_') reply = reply.Remove(reply.Length - 1, 1);
-            await ReplyAsync("https://www.poewiki.net/wiki/" + reply);
+            if (reply.Contains("<@&895231323034222593>")) await ReplyAsync("no");
+            else await ReplyAsync("https://www.poewiki.net/wiki/" + reply);
             
         }
     }

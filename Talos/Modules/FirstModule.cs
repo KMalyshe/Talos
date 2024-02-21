@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Discord.WebSocket;
 using System.Security.Cryptography;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace TalosBot.Modules
 {
@@ -109,7 +110,14 @@ namespace TalosBot.Modules
 
         public async Task shutDown()
         {
-            await ReplyAsync("Shutting down.");
+            var author = Context.Message.Author;
+            if (author.Id != ulong.Parse(File.ReadAllText(@"C:\TalosFiles\myid.txt"))) await ReplyAsync("no");
+            else 
+            {
+                await ReplyAsync("Shutting down.");
+                Process.GetCurrentProcess().Kill();
+            }
+            
         }
     }
 }

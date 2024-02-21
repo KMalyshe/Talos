@@ -42,6 +42,11 @@ namespace TalosBot.Modules
 
         public async Task fish(SocketUser user = null)
         {
+            if (user != null)
+            {
+                await ReplyAsync("You can't fish for someone else!");
+                return;
+            }
             Random rng = new Random();
             var fishDict = new Dictionary<int, string>(){
                 {12, "T5FISH"},
@@ -98,7 +103,7 @@ namespace TalosBot.Modules
 
         [Command ("fishcollection")]
 
-        public async Task fishCollection(SocketUser user = null)
+        public async Task fishCollection(SocketUser? user = null)
         {
             using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
             {
@@ -110,6 +115,11 @@ namespace TalosBot.Modules
                 command.CommandText = @"SELECT T1FISH, T2FISH, T3FISH, T4FISH, T5FISH FROM UserCollection WHERE USERID = $name;";
                 command.Parameters.AddWithValue("$name", userinfo.Id.ToString());
                 SqliteDataReader reader = command.ExecuteReader();
+                if (!reader.HasRows)
+                {
+                    await ReplyAsync("User has not fished before.");
+                    return;
+                }
                 if (reader.Read()) {
                     fishAmounts.Add(Convert.ToInt32(reader[0]));
                     fishAmounts.Add(Convert.ToInt32(reader[1]));
