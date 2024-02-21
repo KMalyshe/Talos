@@ -131,7 +131,7 @@ namespace TalosBot.Modules
                 var embedder = new EmbedBuilder()
                 .WithColor(Color.Blue)
                 .WithTimestamp(DateTime.Now)
-                .AddField("You cast your mighty rod into the endless void...", $"... and catch a {caughtfish}!! ")
+                .AddField("You cast your mighty rod into the endless void...", $"... and catch a **{caughtfish}**!! ")
                 .WithImageUrl($"attachment://{filename}")
                 .Build();
                 await Context.Channel.SendFileAsync(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png", null, false, embedder);
