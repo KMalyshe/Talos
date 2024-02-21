@@ -2,7 +2,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Data.Sqlite;
-
+using KaimiraGames;
 namespace TalosBot.Modules
 {
     public class FunCommands : ModuleBase<SocketCommandContext>
@@ -47,6 +47,7 @@ namespace TalosBot.Modules
                 await ReplyAsync("You can't fish for someone else!");
                 return;
             }
+
             Random rng = new Random();
             var fishDict = new Dictionary<int, string>(){
                 {12, "T5FISH"},
@@ -99,6 +100,44 @@ namespace TalosBot.Modules
 
             }
             await File.AppendAllTextAsync(@"C:\TalosFiles\fishlog.txt", user.Username + " caught a " + fishcaught + " at " + DateTime.Now + "." + Environment.NewLine);
+            
+            /*using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
+            {
+                WeightedList<string> fishWeights = new();
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"SELECT FISHNAME, FISHWEIGHT FROM fishinfo;";
+                SqliteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    fishWeights.Add(reader[0].ToString(), Convert.ToInt32(reader[1]));
+                }
+
+                var path = fishWeights.Next().Replace('_', '-');
+                string caughtfish = path.Remove(path.Length-1).Replace('-', '_');
+                if (caughtfish.Contains("_")) {
+                    string tmp = "";
+                    foreach (string word in caughtfish.Split("_"))
+                    {
+                        tmp += char.ToUpper(word.First()) + word.Substring(1).ToLower() + " ";
+                    }
+                    tmp = tmp.Remove(tmp.Length-1);
+                    caughtfish = tmp;
+                }
+                else caughtfish = char.ToUpper(caughtfish.First()) + caughtfish.Substring(1).ToLower();
+                var article = "a";
+                if ("AEIOU".Contains(caughtfish[0])) article+="n";
+                var filename = Path.GetFileName(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png");
+                var embedder = new EmbedBuilder()
+                .WithColor(Color.Blue)
+                .WithTimestamp(DateTime.Now)
+                .AddField("You cast your mighty rod into the endless void...", $"... and catch a {caughtfish}!! ")
+                .WithImageUrl($"attachment://{filename}")
+                .Build();
+                await Context.Channel.SendFileAsync(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png", null, false, embedder);
+            }
+            */
+
         }
 
         [Command ("fishcollection")]

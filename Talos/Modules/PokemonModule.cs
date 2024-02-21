@@ -1,6 +1,7 @@
 using Discord;
 using Discord.Commands;
 using PokeApiNet;
+using Microsoft.Data.Sqlite;
 using Type = PokeApiNet.Type;
 
 namespace TalosBot.Modules
