@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Data.Sqlite;
 using KaimiraGames;
+using System.Collections.Specialized;
 namespace TalosBot.Modules
 {
     public class FunCommands : ModuleBase<SocketCommandContext>
@@ -101,19 +102,48 @@ namespace TalosBot.Modules
             }
             await File.AppendAllTextAsync(@"C:\TalosFiles\fishlog.txt", user.Username + " caught a " + fishcaught + " at " + DateTime.Now + "." + Environment.NewLine);
             
-            /*using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
+            using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
             {
+                Random rnd = new Random();
                 WeightedList<string> fishWeights = new();
                 connection.Open();
                 var command = connection.CreateCommand();
-                command.CommandText = @"SELECT FISHNAME, FISHWEIGHT FROM fishinfo;";
+                var fishList = new List<int>(){92, 90, 60, 35, 0};
+                var whichcategory = 0;
+                var fish2 = rnd.Next(100);
+                for (int i = 0; i<fishList.Count(); i++)
+                {
+                    if (fish2 >= fishList[i]) 
+                    {
+                    whichcategory = i+1;
+                    break;
+                    }
+                }
+                command.CommandText = @$"SELECT FISHNAME FROM fishinfo WHERE FISHWEIGHT = {whichcategory};";
                 SqliteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    fishWeights.Add(reader[0].ToString(), Convert.ToInt32(reader[1]));
+                    fishWeights.Add(reader[0].ToString(), 1);
                 }
+                reader.Close();
+                var fishname = fishWeights.Next();
+                var path = fishname.Replace('_', '-');
+                /*
+                command.CommandText = @$"
+                CASE WHEN
+                    NOT EXISTS 
+                        (SELECT 1 FROM userinfo 
+                        WHERE USERID = {user.Id} AND 
+                        FISHID = (SELECT FISHID FROM fishinfo WHERE FISHNAME = {fishname}))
+                        THEN
+                            INSERT INTO userinfo (USERID, FISHID, COUNT) VALUES ({user.Id}, (SELECT FISHID FROM fishinfo WHERE FISHNAME = {fishname})), 1)
+                ELSE
+                    UPDATE userinfo SET COUNT = COUNT+1 WHERE USERID = {user.Id} AND FISHID = (SELECT FISHID FROM fishinfo WHERE FISHNAME = {fishname})
+                END
+                ;";
+                command.ExecuteNonQuery();
+                */
 
-                var path = fishWeights.Next().Replace('_', '-');
                 string caughtfish = path.Remove(path.Length-1).Replace('-', '_');
                 if (caughtfish.Contains("_")) {
                     string tmp = "";
@@ -127,16 +157,20 @@ namespace TalosBot.Modules
                 else caughtfish = char.ToUpper(caughtfish.First()) + caughtfish.Substring(1).ToLower();
                 var article = "a";
                 if ("AEIOU".Contains(caughtfish[0])) article+="n";
+
+
                 var filename = Path.GetFileName(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png");
                 var embedder = new EmbedBuilder()
                 .WithColor(Color.Blue)
                 .WithTimestamp(DateTime.Now)
-                .AddField("You cast your mighty rod into the endless void...", $"... and catch a **{caughtfish}**!! ")
+                .WithDescription("WIP feature. These fish do not count towards collections.")   
+                .AddField("You cast your mighty rod into the endless void...", $"... and catch {article} **{caughtfish}**!! ")
                 .WithImageUrl($"attachment://{filename}")
                 .Build();
                 await Context.Channel.SendFileAsync(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png", null, false, embedder);
+                // await ReplyAsync(whichcategory.ToString());
             }
-            */
+            
 
         }
 
@@ -147,7 +181,6 @@ namespace TalosBot.Modules
             using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
             {
                 List<int> fishAmounts = new List<int>();
-
                 connection.Open();
                 var command = connection.CreateCommand();
                 var userinfo = user ?? Context.User;
