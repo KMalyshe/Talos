@@ -48,7 +48,7 @@ namespace TalosBot.Modules
                 await ReplyAsync("You can't fish for someone else!");
                 return;
             }
-
+            /*
             Random rng = new Random();
             var fishDict = new Dictionary<int, string>(){
                 {12, "T5FISH"},
@@ -101,9 +101,10 @@ namespace TalosBot.Modules
 
             }
             await File.AppendAllTextAsync(@"C:\TalosFiles\fishlog.txt", user.Username + " caught a " + fishcaught + " at " + DateTime.Now + "." + Environment.NewLine);
-            
+            */
             using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
             {
+                if (user == null) user = Context.User;
                 Random rnd = new Random();
                 WeightedList<string> fishWeights = new();
                 connection.Open();
@@ -128,7 +129,7 @@ namespace TalosBot.Modules
                 reader.Close();
                 var fishname = fishWeights.Next();
                 var path = fishname.Replace('_', '-');
-                /*
+                /* PROBLEMATIC SQL:
                 command.CommandText = @$"
                 CASE WHEN
                     NOT EXISTS 
@@ -143,6 +144,26 @@ namespace TalosBot.Modules
                 ;";
                 command.ExecuteNonQuery();
                 */
+                command.CommandText = @$"SELECT * FROM userinfo WHERE FISHID = @name AND USERID = @username";
+                command.Parameters.AddWithValue("@name", fishname);
+                command.Parameters.AddWithValue("@username", user.Id);
+                var reader2 = command.ExecuteReader();
+                if (!reader2.HasRows)
+                {
+                    reader2.Close();
+                    command.CommandText = @"INSERT INTO userinfo (USERID, FISHID, COUNT) VALUES ($username, $name, 1);";
+                    command.Parameters.AddWithValue("$username", user.Id);
+                    command.Parameters.AddWithValue("$name", fishname);
+                    command.ExecuteNonQuery();
+                }
+                else
+                {
+                    reader2.Close();
+                    command.CommandText = @"UPDATE userinfo SET COUNT = COUNT+1 WHERE USERID = $username AND FISHID = $name;";
+                    command.Parameters.AddWithValue("$username", user.Id);
+                    command.Parameters.AddWithValue("$name", fishname);
+                    command.ExecuteNonQuery();
+                }
 
                 string caughtfish = path.Remove(path.Length-1).Replace('-', '_');
                 if (caughtfish.Contains("_")) {
@@ -157,14 +178,20 @@ namespace TalosBot.Modules
                 else caughtfish = char.ToUpper(caughtfish.First()) + caughtfish.Substring(1).ToLower();
                 var article = "a";
                 if ("AEIOU".Contains(caughtfish[0])) article+="n";
+                var categoryReactions = new Dictionary<int, string>(){
+                    {1, "What an incredible, brilliant catch! Bards will sing songs about this capture."},
+                    {2, "A catch to be proud of. Congratulations! You're a veteran fisher."},
+                    {3, "Impressive! But there's always a bigger fish.."},
+                    {4, "A nice surprise! You're movin' up in the world!"},
+                    {5, "Well, at least it's still a fish."}
+                };
 
 
                 var filename = Path.GetFileName(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png");
                 var embedder = new EmbedBuilder()
                 .WithColor(Color.Blue)
-                .WithTimestamp(DateTime.Now)
-                .WithDescription("WIP feature. These fish do not count towards collections.")   
-                .AddField("You cast your mighty rod into the endless void...", $"... and catch {article} **{caughtfish}**!! ")
+                .WithTimestamp(DateTime.Now) 
+                .AddField("You cast your mighty rod into the endless void...", $"... and catch {article} **{caughtfish}**! " + categoryReactions[whichcategory])
                 .WithImageUrl($"attachment://{filename}")
                 .Build();
                 await Context.Channel.SendFileAsync(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png", null, false, embedder);
@@ -173,7 +200,7 @@ namespace TalosBot.Modules
             
 
         }
-
+        /*
         [Command ("fishcollection")]
 
         public async Task fishCollection(SocketUser? user = null)
@@ -216,6 +243,6 @@ namespace TalosBot.Modules
                 embed.AddField("Total Fish Accrued:", "**" + fishAmounts.Sum() + "**").WithColor(Color.Blue);
                 await ReplyAsync(embed: embed.Build());
             }
-        }
+        }*/
     }
 }
