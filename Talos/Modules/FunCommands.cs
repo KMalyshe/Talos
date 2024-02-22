@@ -109,7 +109,7 @@ namespace TalosBot.Modules
                 WeightedList<string> fishWeights = new();
                 connection.Open();
                 var command = connection.CreateCommand();
-                var fishList = new List<int>(){92, 90, 60, 35, 0};
+                var fishList = new List<int>(){92, 80, 60, 35, 0};
                 var whichcategory = 0;
                 var fish2 = rnd.Next(100);
                 for (int i = 0; i<fishList.Count(); i++)
