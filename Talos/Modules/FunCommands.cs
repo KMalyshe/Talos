@@ -193,6 +193,7 @@ namespace TalosBot.Modules
                 .WithTimestamp(DateTime.Now) 
                 .AddField("You cast your mighty rod into the endless void...", $"... and catch {article} **{caughtfish}**! " + categoryReactions[whichcategory])
                 .WithImageUrl($"attachment://{filename}")
+                .WithFooter("Invoked by " + user.Username)
                 .Build();
                 await Context.Channel.SendFileAsync(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png", null, false, embedder);
                 // await ReplyAsync(whichcategory.ToString());
