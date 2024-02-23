@@ -48,7 +48,64 @@ namespace TalosBot.Modules
                 await ReplyAsync("You can't fish for someone else!");
                 return;
             }
-            /*
+            else user = Context.User;
+            using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = @"SELECT time FROM cooldown WHERE userid = $id";
+                command.Parameters.AddWithValue("$id", user.Id);
+                var timeReader = command.ExecuteReader();
+                command.Parameters.Clear();
+                if (!timeReader.HasRows)
+                {
+                    timeReader.Close();
+                    command.CommandText = @"INSERT INTO cooldown (userid, time) VALUES (@id, @currtime)";
+                    command.Parameters.AddWithValue("@id", user.Id);
+                    command.Parameters.AddWithValue("@currtime", $"{DateTime.Now.Hour}-{DateTime.Now.Minute}");
+                    command.ExecuteNonQuery();
+                    command.Parameters.Clear();
+                }
+                else
+                {
+                    List<string> times = new List<string>();
+                    while(timeReader.Read())
+                    {
+                        times.Add(timeReader[0].ToString());
+                    }
+                    if (times.Count() > 4)
+                    {
+                        List<string> thenTime = times[0].Split("-").ToList();
+                        if((DateTime.Now.Hour-Convert.ToInt32(thenTime[0]) < 1) || 
+                        ((DateTime.Now.Hour-Convert.ToInt32(thenTime[0]) == 1) && (DateTime.Now.Minute-Convert.ToInt32(thenTime[1]) < 0)))
+                        {
+                            await ReplyAsync($"You are on cooldown! You may only fish five times per hour. Your oldest fishing attempt was at `{thenTime[0]}:{thenTime[1]}`.");
+                            return;
+                        }
+                        else
+                        {
+                            timeReader.Close();
+                            command.CommandText = @"
+                            INSERT INTO cooldown (userid, time) VALUES ($id, $currtime)
+                            
+                            DELETE FROM cooldown WHERE userid = $id2 AND NOT EXISTS IN (SELECT rowid FROM cooldown ORDERBY rowid DESC LIMIT 5)";
+                            command.Parameters.AddWithValue("$id", user.Id);
+                            command.Parameters.AddWithValue("$currtime", $"{DateTime.Now.Hour}-{DateTime.Now.Minute}");
+                            command.Parameters.AddWithValue("$id2", user.Id);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    else 
+                    {
+                        timeReader.Close();
+                        command.CommandText = @"INSERT INTO cooldown (userid, time) VALUES ($id, $currtime)";
+                        command.Parameters.AddWithValue("$id", user.Id);
+                        command.Parameters.AddWithValue("$currtime", $"{DateTime.Now.Hour}-{DateTime.Now.Minute}");
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            /* OLD FISHING
             Random rng = new Random();
             var fishDict = new Dictionary<int, string>(){
                 {12, "T5FISH"},
@@ -104,7 +161,6 @@ namespace TalosBot.Modules
             */
             using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
             {
-                if (user == null) user = Context.User;
                 Random rnd = new Random();
                 WeightedList<string> fishWeights = new();
                 connection.Open();
@@ -232,7 +288,7 @@ namespace TalosBot.Modules
 
                 while (reader.Read()) {
                     string fishname = reader[0].ToString();
-                    if ((tier != "all") && !fishname.Contains(tier)) continue;
+                    if ((tier != "all") && !fishname.Contains((6-Int32.Parse(tier)).ToString())) continue;
                     if (fishname.Contains("_")) {
                     string tmp = "";
                     foreach (string word in fishname.Split("_"))
@@ -257,7 +313,7 @@ namespace TalosBot.Modules
                     }
                     var embed = new EmbedBuilder()
                     .WithColor(Color.Blue)
-                    .WithFooter("Invoked by " + userinfo.Username)
+                    .WithFooter("Invoked by " + Context.User.Username)
                     .WithTimestamp(DateTime.Now)
                     .WithTitle($"{userinfo.Username}'s Fish Collection");
                     var currTier = 1;
@@ -268,22 +324,23 @@ namespace TalosBot.Modules
                         {
                             fishes+=fish + ": " + "**" + fishAmounts[fish + currTier.ToString()] + Environment.NewLine + "**";
                         }
+                        if (fishes.Equals("")) fishes = "You have not found any \nfish of this tier!";
                         embed.AddField($"{String.Concat(Enumerable.Repeat("⭐", 6-currTier))} \nFish:", fishes, true);
                         currTier++;
                     }
                     await ReplyAsync(embed: embed.Build());
                 }
-                /*
                 else
                 {
                     List<string> fishList = new List<string>();
                     reader.Close();
-                    command.CommandText = @"SELECT FISHNAME FROM fishinfo WHERE WEIGHT = @weight";
-                    command.Parameters.AddWithValue("@weight", 6-Int32.Parse(tier));
+                    command.CommandText = @"SELECT FISHNAME FROM fishinfo WHERE FISHWEIGHT = $weight";
+                    int test = 6-Int32.Parse(tier);
+                    command.Parameters.AddWithValue("$weight", test);
                     var reader2 = command.ExecuteReader();
                     while (reader2.Read())
                     {
-                        string fishname = reader[0].ToString();
+                        string fishname = reader2[0].ToString();
                         if (fishname.Contains("_")) 
                         {
                             string tmp = "";
@@ -299,15 +356,19 @@ namespace TalosBot.Modules
                     }
                     var embed = new EmbedBuilder()
                     .WithColor(Color.Blue)
-                    .WithFooter("Invoked by " + userinfo.Username)
+                    .WithFooter("Invoked by " + Context.User.Username)
                     .WithTimestamp(DateTime.Now)
-                    .WithTitle($"{userinfo.Username}'s {String.Concat(Enumerable.Repeat("⭐", 6-Int32.Parse(tier)))} Fish Collection");
+                    .WithTitle($"{userinfo.Username}'s {String.Concat(Enumerable.Repeat("⭐", Int32.Parse(tier)))} Fish Collection");
+                    var fishString = "";
                     foreach(string fish in fishList)
                     {
-
+                        var efish = fish.Remove(fish.Length-1);
+                        if (!fishAmounts.Keys.Contains(fish)) fishString += $"*{efish}*: Not found yet!" + Environment.NewLine;
+                        else fishString += $"**{efish}**: {fishAmounts[fish]}" + Environment.NewLine; 
                     }
+                    embed.AddField("To find out more about a certain \nfish, do !fishinfo. **WIP!; NOT DONE YET**", fishString);
+                    await ReplyAsync(embed: embed.Build());
                 }
-                */
             }
         }
 
