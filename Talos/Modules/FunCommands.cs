@@ -179,11 +179,11 @@ namespace TalosBot.Modules
                 var article = "a";
                 if ("AEIOU".Contains(caughtfish[0])) article+="n";
                 var categoryReactions = new Dictionary<int, string>(){
-                    {1, "What an incredible, brilliant catch! Bards will sing songs about this capture."},
-                    {2, "A catch to be proud of. Congratulations! You're a veteran fisher."},
-                    {3, "Impressive! But there's always a bigger fish.."},
-                    {4, "A nice surprise! You're movin' up in the world!"},
-                    {5, "Well, at least it's still a fish."}
+                    {1, "What an incredible, brilliant catch! Bards will sing songs about this capture. \n⭐⭐⭐⭐⭐"},
+                    {2, "A catch to be proud of. Congratulations! You're a veteran fisher. \n⭐⭐⭐⭐"},
+                    {3, "Impressive! But there's always a bigger fish. \n⭐⭐⭐"},
+                    {4, "A nice surprise! You're movin' up in the world! \n⭐⭐"},
+                    {5, "Well, at least it's still a fish. \n⭐"}
                 };
 
 
@@ -201,49 +201,82 @@ namespace TalosBot.Modules
             
 
         }
-        /*
+        
         [Command ("fishcollection")]
 
-        public async Task fishCollection(SocketUser? user = null)
+        public async Task fishCollection(string tier = "all", SocketUser? user = null)
         {
             using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
             {
-                List<int> fishAmounts = new List<int>();
+                var fishAmounts = new Dictionary<string, int>();
                 connection.Open();
                 var command = connection.CreateCommand();
                 var userinfo = user ?? Context.User;
-                command.CommandText = @"SELECT T1FISH, T2FISH, T3FISH, T4FISH, T5FISH FROM UserCollection WHERE USERID = $name;";
-                command.Parameters.AddWithValue("$name", userinfo.Id.ToString());
+                if (tier != "all")
+                {
+                    if (!"12345".Contains(tier) || (tier.Length > 1))
+                    {
+                        await ReplyAsync("Please enter a valid fish star tier, or enter all to view your entire collection.");
+                        return;
+                    }
+                }
+                command.CommandText = @"SELECT FISHID, COUNT FROM userinfo WHERE USERID = @name";
+                command.Parameters.AddWithValue("@name", userinfo.Id.ToString());
                 SqliteDataReader reader = command.ExecuteReader();
                 if (!reader.HasRows)
                 {
+                    await ReplyAsync(userinfo.Id.ToString());
                     await ReplyAsync("User has not fished before.");
                     return;
                 }
-                if (reader.Read()) {
-                    fishAmounts.Add(Convert.ToInt32(reader[0]));
-                    fishAmounts.Add(Convert.ToInt32(reader[1]));
-                    fishAmounts.Add(Convert.ToInt32(reader[2]));
-                    fishAmounts.Add(Convert.ToInt32(reader[3]));
-                    fishAmounts.Add(Convert.ToInt32(reader[4]));
+                while (reader.Read()) {
+                    string fishname = reader[0].ToString();
+                    if ((tier != "all") && !fishname.Contains(tier)) continue;
+                    if (fishname.Contains("_")) {
+                    string tmp = "";
+                    foreach (string word in fishname.Split("_"))
+                    {
+                        tmp += char.ToUpper(word.First()) + word.Substring(1).ToLower() + " ";
+                    }
+                    tmp = tmp.Remove(tmp.Length-1);
+                    fishname = tmp;
+                    }
+                    else fishname = char.ToUpper(fishname.First()) + fishname.Substring(1).ToLower();
+                    fishname = "**" + fishname + "**";
+                    fishAmounts.Add(fishname, Convert.ToInt32(reader[1]));
                 }
-                var embed = new EmbedBuilder();
-                embed.AddField(userinfo.Username + "'s", "Marvelous Fishing Collection");
-                var fishDict = new Dictionary<int, string>()
+                if (tier == "all")
                 {
-                {0, "🐠 \nThe most tropical of fish. \n**"},
-                {1, "🦐 \nIt could not be more shrimple. \n**"},
-                {2, "🐟 \nThe kind you'd find at the market. \n**"},
-                {3, "🔋 \nYou can charge something, I guess? \n**"},
-                {4, "👢 \nEventually, you'll find the right size. \n**"}
-                };
-                for (int i = 0; i<5; i++)
-                {
-                    embed.AddField("Tier " + (i+1) + " Fish:", fishDict[i] + fishAmounts[i].ToString() + "**");
+                    List<List<string>> fishList = new List<List<string>>();
+                    for (int i = 0; i<5; i++) fishList.Add(new List<string>());
+                    foreach(string fish in fishAmounts.Keys)
+                    {
+                        var intTier = Convert.ToInt32(fish[fish.Length-1])-1;
+                        fishList[intTier].Add(fish.Remove(fish.Length-1));
+                    }
+                    var embed = new EmbedBuilder()
+                    .WithColor(Color.Blue)
+                    .WithFooter("Invoked by " + user.Username)
+                    .WithTimestamp(DateTime.Now);
+                    var inline = false;
+                    var currTier = 1;
+                    foreach(List<string> tiers in fishList)
+                    {
+                        string fishes = "";
+                        foreach(string fish in tiers)
+                        {
+                            fishes+=fish + ": " + fishAmounts[fish + currTier.ToString()] + Environment.NewLine;
+                        }
+                        if (inline) embed.AddField($"Tier {currTier} Fish: {String.Concat(Enumerable.Repeat("⭐", 6-currTier))})", fishes, true);
+                        else embed.AddField($"Tier {currTier} Fish: {String.Concat(Enumerable.Repeat("⭐", 6-currTier))})", fishes, false);
+
+                        currTier++;
+                        inline = !inline;
+                    }
+                    await ReplyAsync(embed: embed.Build());
                 }
-                embed.AddField("Total Fish Accrued:", "**" + fishAmounts.Sum() + "**").WithColor(Color.Blue);
-                await ReplyAsync(embed: embed.Build());
             }
-        }*/
+        }
+
     }
 }
