@@ -79,8 +79,11 @@ namespace TalosBot.Modules
                         if((DateTime.Now.Hour-Convert.ToInt32(thenTime[0]) < 1) || 
                         ((DateTime.Now.Hour-Convert.ToInt32(thenTime[0]) == 1) && (DateTime.Now.Minute-Convert.ToInt32(thenTime[1]) < 0)))
                         {
-                            if (times[1].Length == 1) times[1] = "0"+times[1];
-                            await ReplyAsync($"You are on cooldown! You may only fish five times per hour. Your oldest fishing attempt was at `{thenTime[0]}:{thenTime[1]}`.");
+                            var nextFish = 60-Convert.ToInt32(thenTime[1]) + DateTime.Now.Minute-1;
+
+                            if (DateTime.Now.Hour == Convert.ToInt32(thenTime[0])) nextFish = DateTime.Now.Minute - Convert.ToInt32(thenTime[1]);
+
+                            await ReplyAsync($"<@{user.Id}>, you are on cooldown! You may only fish five times per hour. You may fish again in {60-nextFish} minutes.");
                             return;
                         }
                         else
