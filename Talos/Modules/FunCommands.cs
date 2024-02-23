@@ -79,19 +79,21 @@ namespace TalosBot.Modules
                         if((DateTime.Now.Hour-Convert.ToInt32(thenTime[0]) < 1) || 
                         ((DateTime.Now.Hour-Convert.ToInt32(thenTime[0]) == 1) && (DateTime.Now.Minute-Convert.ToInt32(thenTime[1]) < 0)))
                         {
+                            if (times[1].Length == 1) times[1] = "0"+times[1];
                             await ReplyAsync($"You are on cooldown! You may only fish five times per hour. Your oldest fishing attempt was at `{thenTime[0]}:{thenTime[1]}`.");
                             return;
                         }
                         else
                         {
                             timeReader.Close();
-                            command.CommandText = @"
-                            INSERT INTO cooldown (userid, time) VALUES ($id, $currtime)
-                            
-                            DELETE FROM cooldown WHERE userid = $id2 AND NOT EXISTS IN (SELECT rowid FROM cooldown ORDERBY rowid DESC LIMIT 5)";
+                            command.Parameters.Clear();
+                            command.CommandText = @"DELETE FROM cooldown WHERE id = (SELECT id FROM cooldown WHERE userid = $id2 LIMIT 1)";
+                            command.Parameters.AddWithValue("$id2", user.Id);
+                            command.ExecuteNonQuery();
+                            command.Parameters.Clear();
+                            command.CommandText = @"INSERT INTO cooldown (userid, time) VALUES ($id, $currtime)";
                             command.Parameters.AddWithValue("$id", user.Id);
                             command.Parameters.AddWithValue("$currtime", $"{DateTime.Now.Hour}-{DateTime.Now.Minute}");
-                            command.Parameters.AddWithValue("$id2", user.Id);
                             command.ExecuteNonQuery();
                         }
                     }
@@ -317,17 +319,21 @@ namespace TalosBot.Modules
                     .WithTimestamp(DateTime.Now)
                     .WithTitle($"{userinfo.Username}'s Fish Collection");
                     var currTier = 1;
+                    var totalfish = 0;
                     foreach(List<string> tiers in fishList)
                     {
                         string fishes = "";
                         foreach(string fish in tiers)
                         {
-                            fishes+=fish + ": " + "**" + fishAmounts[fish + currTier.ToString()] + Environment.NewLine + "**";
+                            var fishcount = fishAmounts[fish + currTier.ToString()];
+                            totalfish += fishcount;
+                            fishes+=fish + ": " + "**" + fishcount + Environment.NewLine + "**";
                         }
                         if (fishes.Equals("")) fishes = "You have not found any \nfish of this tier!";
                         embed.AddField($"{String.Concat(Enumerable.Repeat("⭐", 6-currTier))} \nFish:", fishes, true);
                         currTier++;
                     }
+                    embed.AddField("Total fish collected:", totalfish.ToString());
                     await ReplyAsync(embed: embed.Build());
                 }
                 else
