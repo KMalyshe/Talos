@@ -216,19 +216,20 @@ namespace TalosBot.Modules
                 {
                     if (!"12345".Contains(tier) || (tier.Length > 1))
                     {
-                        await ReplyAsync("Please enter a valid fish star tier, or enter all to view your entire collection.");
+                        await ReplyAsync("Please enter a valid fish star level, or enter all to view your entire collection.");
                         return;
                     }
                 }
-                command.CommandText = @"SELECT FISHID, COUNT FROM userinfo WHERE USERID = @name";
-                command.Parameters.AddWithValue("@name", userinfo.Id.ToString());
+                command.CommandText = @$"SELECT FISHID, COUNT FROM userinfo WHERE USERID = @name";
+                command.Parameters.AddWithValue("@name", userinfo.Id);
+                //command.Prepare();
                 SqliteDataReader reader = command.ExecuteReader();
                 if (!reader.HasRows)
                 {
-                    await ReplyAsync(userinfo.Id.ToString());
                     await ReplyAsync("User has not fished before.");
                     return;
                 }
+
                 while (reader.Read()) {
                     string fishname = reader[0].ToString();
                     if ((tier != "all") && !fishname.Contains(tier)) continue;
@@ -242,39 +243,71 @@ namespace TalosBot.Modules
                     fishname = tmp;
                     }
                     else fishname = char.ToUpper(fishname.First()) + fishname.Substring(1).ToLower();
-                    fishname = "**" + fishname + "**";
                     fishAmounts.Add(fishname, Convert.ToInt32(reader[1]));
                 }
+
                 if (tier == "all")
                 {
                     List<List<string>> fishList = new List<List<string>>();
                     for (int i = 0; i<5; i++) fishList.Add(new List<string>());
                     foreach(string fish in fishAmounts.Keys)
                     {
-                        var intTier = Convert.ToInt32(fish[fish.Length-1])-1;
+                        var intTier = ((int) Char.GetNumericValue(fish[fish.Length-1]))-1;
                         fishList[intTier].Add(fish.Remove(fish.Length-1));
                     }
                     var embed = new EmbedBuilder()
                     .WithColor(Color.Blue)
-                    .WithFooter("Invoked by " + user.Username)
-                    .WithTimestamp(DateTime.Now);
-                    var inline = false;
+                    .WithFooter("Invoked by " + userinfo.Username)
+                    .WithTimestamp(DateTime.Now)
+                    .WithTitle($"{userinfo.Username}'s Fish Collection");
                     var currTier = 1;
                     foreach(List<string> tiers in fishList)
                     {
                         string fishes = "";
                         foreach(string fish in tiers)
                         {
-                            fishes+=fish + ": " + fishAmounts[fish + currTier.ToString()] + Environment.NewLine;
+                            fishes+=fish + ": " + "**" + fishAmounts[fish + currTier.ToString()] + Environment.NewLine + "**";
                         }
-                        if (inline) embed.AddField($"Tier {currTier} Fish: {String.Concat(Enumerable.Repeat("⭐", 6-currTier))})", fishes, true);
-                        else embed.AddField($"Tier {currTier} Fish: {String.Concat(Enumerable.Repeat("⭐", 6-currTier))})", fishes, false);
-
+                        embed.AddField($"{String.Concat(Enumerable.Repeat("⭐", 6-currTier))} \nFish:", fishes, true);
                         currTier++;
-                        inline = !inline;
                     }
                     await ReplyAsync(embed: embed.Build());
                 }
+                /*
+                else
+                {
+                    List<string> fishList = new List<string>();
+                    reader.Close();
+                    command.CommandText = @"SELECT FISHNAME FROM fishinfo WHERE WEIGHT = @weight";
+                    command.Parameters.AddWithValue("@weight", 6-Int32.Parse(tier));
+                    var reader2 = command.ExecuteReader();
+                    while (reader2.Read())
+                    {
+                        string fishname = reader[0].ToString();
+                        if (fishname.Contains("_")) 
+                        {
+                            string tmp = "";
+                            foreach (string word in fishname.Split("_"))
+                            {
+                                tmp += char.ToUpper(word.First()) + word.Substring(1).ToLower() + " ";
+                            }
+                            tmp = tmp.Remove(tmp.Length-1);
+                            fishname = tmp;
+                        }
+                        else fishname = char.ToUpper(fishname.First()) + fishname.Substring(1).ToLower();
+                        fishList.Add(fishname);
+                    }
+                    var embed = new EmbedBuilder()
+                    .WithColor(Color.Blue)
+                    .WithFooter("Invoked by " + userinfo.Username)
+                    .WithTimestamp(DateTime.Now)
+                    .WithTitle($"{userinfo.Username}'s {String.Concat(Enumerable.Repeat("⭐", 6-Int32.Parse(tier)))} Fish Collection");
+                    foreach(string fish in fishList)
+                    {
+
+                    }
+                }
+                */
             }
         }
 
