@@ -76,8 +76,12 @@ namespace TalosBot.Modules
                     if (times.Count() > 4)
                     {
                         List<string> thenTime = times[0].Split("-").ToList();
-                        if((DateTime.Now.Hour-Convert.ToInt32(thenTime[0]) < 1) || 
-                        ((DateTime.Now.Hour-Convert.ToInt32(thenTime[0]) == 1) && (DateTime.Now.Minute-Convert.ToInt32(thenTime[1]) < 0)))
+                        var zeroHour = DateTime.Now.Hour;
+                        if (zeroHour == 0) zeroHour = 24;
+                        var thenZero = Int32.Parse(thenTime[0]);
+                        if (thenZero == 0) thenZero = 24;
+                        if((zeroHour-thenZero < 1) || 
+                        ((zeroHour-thenZero == 1) && (DateTime.Now.Minute-Convert.ToInt32(thenTime[1]) < 0)))
                         {
                             var nextFish = 60-Convert.ToInt32(thenTime[1]) + DateTime.Now.Minute-1;
 
@@ -372,7 +376,7 @@ namespace TalosBot.Modules
                     foreach(string fish in fishList)
                     {
                         var efish = fish.Remove(fish.Length-1);
-                        if (!fishAmounts.Keys.Contains(fish)) fishString += $"*{efish}*: Not found yet!" + Environment.NewLine;
+                        if (!fishAmounts.Keys.Contains(fish)) fishString += $"*{efish}: Not found yet!*" + Environment.NewLine;
                         else fishString += $"**{efish}**: {fishAmounts[fish]}" + Environment.NewLine; 
                     }
                     embed.AddField("To find out more about a certain \nfish, do !fishinfo. **WIP!; NOT DONE YET**", fishString);
