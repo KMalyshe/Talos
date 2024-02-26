@@ -12,9 +12,13 @@ namespace TalosBot.Modules
         {
             var embed = new EmbedBuilder();
             // !fish
-            embed.AddField("*!fish*", "Cast your rod and retrieve a random fish. Maybe you'll get lucky!");
+            embed.AddField("*!fish*", "Cast your rod and retrieve a random fish. Maybe you'll get lucky! There is scoring and a leaderboard. \nYou may fish eight times per hour.");
             // !fishcollection
-            embed.AddField("*!fishcollection*", "Check on your lovely collection.");
+            embed.AddField("*!fishcollection*", "Check on your or another user's lovely collection. You can display \nall fish with !fishcollection all or display \na specific star count with !fishcollection [number]. User arg follows last. \n Example: !fishcollection 4 @Talos");
+            // !fishscore
+            embed.AddField("*!fishscore*", "Check your or another user's score.");
+            // !fishlb
+            embed.AddField("*!fishlb*", "Check the top n positions of the leaderboard. \nEx: !fishlb 8 for the topmost 8 users. Goes up to 10.");
             // !cat
             embed.AddField("*!cat*", "Post a random goofy cat gif.");
             // !roll
