@@ -296,7 +296,7 @@ namespace TalosBot.Modules
                     var embedder = new EmbedBuilder()
                     .WithColor(Color.Blue)
                     .WithTimestamp(DateTime.Now) 
-                    .AddField("You cwefewfwefast your mighty rod into the endless void...", $"... and catch {article} **{caughtfish}**! " + categoryReactions[whichcategory])
+                    .AddField("You cast your mighty rod into the endless void...", $"... and catch {article} **{caughtfish}**! " + categoryReactions[whichcategory])
                     .WithImageUrl($"attachment://{filename}")
                     .WithFooter("Invoked by " + user.Username)
                     .Build();
