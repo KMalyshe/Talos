@@ -274,7 +274,7 @@ namespace TalosBot.Modules
 
                 var filename = Path.GetFileName(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png");
 
-                if (heart == 4) 
+                if (heart < 2) 
                 {
                     var embedder = new EmbedBuilder()
                     .WithColor(Color.Blue)
@@ -285,7 +285,7 @@ namespace TalosBot.Modules
                     .AddField("🌀 Wow! You found a Heart of the Depths! 🌀", "You have been granted an additional fishing attempt for this cooldown phase.")
                     .Build();
                     command.Parameters.Clear();
-                    command.CommandText = @"DELETE FROM cooldown WHERE id = (SELECT id FROM cooldown WHERE userid = $id2 LIMIT 1)";
+                    command.CommandText = @"DELETE FROM cooldown WHERE id IN (SELECT id FROM cooldown WHERE userid = $id2 LIMIT 8)";
                     command.Parameters.AddWithValue("$id2", user.Id);
                     command.ExecuteNonQuery();
                     command.Parameters.Clear();
