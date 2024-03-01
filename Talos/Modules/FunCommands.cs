@@ -269,15 +269,39 @@ namespace TalosBot.Modules
                 command.Parameters.AddWithValue("@id", user.Id);
                 command.ExecuteNonQuery();
 
+                // Heart of the Depths
+                var heart = rnd.Next(10);
+
                 var filename = Path.GetFileName(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png");
-                var embedder = new EmbedBuilder()
-                .WithColor(Color.Blue)
-                .WithTimestamp(DateTime.Now) 
-                .AddField("You cast your mighty rod into the endless void...", $"... and catch {article} **{caughtfish}**! " + categoryReactions[whichcategory])
-                .WithImageUrl($"attachment://{filename}")
-                .WithFooter("Invoked by " + user.Username)
-                .Build();
-                await Context.Channel.SendFileAsync(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png", null, false, embedder);
+
+                if (heart == 4) 
+                {
+                    var embedder = new EmbedBuilder()
+                    .WithColor(Color.Blue)
+                    .WithTimestamp(DateTime.Now) 
+                    .AddField("You cast your mighty rod into the endless void...", $"... and catch {article} **{caughtfish}**! " + categoryReactions[whichcategory])
+                    .WithImageUrl($"attachment://{filename}")
+                    .WithFooter("Invoked by " + user.Username)
+                    .AddField("🌀 Wow! You found a Heart of the Depths! 🌀", "You have been granted an additional fishing attempt for this cooldown phase.")
+                    .Build();
+                    command.Parameters.Clear();
+                    command.CommandText = @"DELETE FROM cooldown WHERE id = (SELECT id FROM cooldown WHERE userid = $id2 LIMIT 1)";
+                    command.Parameters.AddWithValue("$id2", user.Id);
+                    command.ExecuteNonQuery();
+                    command.Parameters.Clear();
+                    await Context.Channel.SendFileAsync(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png", null, false, embedder);
+                }
+                else
+                {
+                    var embedder = new EmbedBuilder()
+                    .WithColor(Color.Blue)
+                    .WithTimestamp(DateTime.Now) 
+                    .AddField("You cwefewfwefast your mighty rod into the endless void...", $"... and catch {article} **{caughtfish}**! " + categoryReactions[whichcategory])
+                    .WithImageUrl($"attachment://{filename}")
+                    .WithFooter("Invoked by " + user.Username)
+                    .Build();
+                    await Context.Channel.SendFileAsync(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png", null, false, embedder);
+                }
                 // await ReplyAsync(whichcategory.ToString());
             }
             
