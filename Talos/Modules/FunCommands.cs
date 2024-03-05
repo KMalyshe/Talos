@@ -270,11 +270,11 @@ namespace TalosBot.Modules
                 command.ExecuteNonQuery();
 
                 // Heart of the Depths
-                var heart = rnd.Next(10);
+                var heart = rnd.Next(100);
 
                 var filename = Path.GetFileName(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png");
 
-                if (heart < 2) 
+                if (heart < 5) 
                 {
                     var embedder = new EmbedBuilder()
                     .WithColor(Color.Blue)
