@@ -282,7 +282,7 @@ namespace TalosBot.Modules
                     .AddField("You cast your mighty rod into the endless void...", $"... and catch {article} **{caughtfish}**! " + categoryReactions[whichcategory])
                     .WithImageUrl($"attachment://{filename}")
                     .WithFooter("Invoked by " + user.Username)
-                    .AddField("🌀 Wow! You found a Heart of the Depths! 🌀", "You have been granted an additional fishing attempt for this cooldown phase.")
+                    .AddField("🌀 Wow! You found a Heart of the Depths! 🌀", "Your fishing cooldowns have been reset.")
                     .Build();
                     command.Parameters.Clear();
                     command.CommandText = @"DELETE FROM cooldown WHERE id IN (SELECT id FROM cooldown WHERE userid = $id2 LIMIT 8)";
