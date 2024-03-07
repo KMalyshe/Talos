@@ -64,7 +64,7 @@ namespace TalosBot.Modules
                     timeReader.Close();
                     command.CommandText = @"INSERT INTO cooldown (userid, time) VALUES (@id, @currtime)";
                     command.Parameters.AddWithValue("@id", user.Id);
-                    command.Parameters.AddWithValue("@currtime", $"{DateTime.Now.Hour}-{DateTime.Now.Minute}");
+                    command.Parameters.AddWithValue("@currtime", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
                     command.ExecuteNonQuery();
                     command.Parameters.Clear();
                 }
@@ -77,19 +77,13 @@ namespace TalosBot.Modules
                     }
                     if (times.Count() > 7)
                     {
-                        List<string> thenTime = times[0].Split("-").ToList();
-                        var zeroHour = DateTime.Now.Hour;
-                        if (zeroHour == 0) zeroHour = 24;
-                        var thenZero = Int32.Parse(thenTime[0]);
-                        if (thenZero == 0) thenZero = 24;
-                        if((zeroHour-thenZero < 1) || 
-                        ((zeroHour-thenZero == 1) && (DateTime.Now.Minute-Convert.ToInt32(thenTime[1]) < 0)))
+                        long thenTime = Convert.ToInt64(times[0]);
+                        long currDateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                        if(currDateTime - thenTime < 3600)
                         {
-                            var nextFish = 60-Convert.ToInt32(thenTime[1]) + DateTime.Now.Minute-1;
-
-                            if (DateTime.Now.Hour == Convert.ToInt32(thenTime[0])) nextFish = DateTime.Now.Minute - Convert.ToInt32(thenTime[1]);
-
-                            await ReplyAsync($"<@{user.Id}>, you are on cooldown! You may only fish eight times per hour. You may fish again in {60-nextFish} minutes.");
+                            var nextFish = thenTime + 3600;
+                            // NOT +3600! I AM IN UTC+1 AND DATETIME SUCKS
+                            await ReplyAsync($"<@{user.Id}>, you are on cooldown! You may only fish eight times per hour. You may fish again at <t:{nextFish}:t>.");
                             return;
                         }
                         else
@@ -102,7 +96,7 @@ namespace TalosBot.Modules
                             command.Parameters.Clear();
                             command.CommandText = @"INSERT INTO cooldown (userid, time) VALUES ($id, $currtime)";
                             command.Parameters.AddWithValue("$id", user.Id);
-                            command.Parameters.AddWithValue("$currtime", $"{DateTime.Now.Hour}-{DateTime.Now.Minute}");
+                            command.Parameters.AddWithValue("$currtime", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
                             command.ExecuteNonQuery();
                         }
                     }
@@ -111,7 +105,7 @@ namespace TalosBot.Modules
                         timeReader.Close();
                         command.CommandText = @"INSERT INTO cooldown (userid, time) VALUES ($id, $currtime)";
                         command.Parameters.AddWithValue("$id", user.Id);
-                        command.Parameters.AddWithValue("$currtime", $"{DateTime.Now.Hour}-{DateTime.Now.Minute}");
+                        command.Parameters.AddWithValue("$currtime", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
                         command.ExecuteNonQuery();
                     }
                 }
