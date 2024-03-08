@@ -10,6 +10,8 @@ namespace TalosBot.Modules
     {
         [Command ("dex")]
         [Alias ("pokemon", "pokedex")]
+
+        // HEAVY WIP NOT FUNCTIONAL
         public async Task pokeDex(params string[] search)
         {
             PokeApiClient pokeClient = new PokeApiClient();

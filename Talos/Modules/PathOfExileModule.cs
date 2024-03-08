@@ -9,7 +9,7 @@ namespace TalosBot.Modules
 
         public async Task PoeSearch(params string[] search)
         {
-            // Capitalize the 
+            // Capitalize everything except of and the because apparently those words are special
             var reply = "";
             foreach (string word in search)
             {
@@ -26,7 +26,10 @@ namespace TalosBot.Modules
                 reply += char.ToUpper(word.First()) + word.Substring(1).ToLower() + "_";
             }
             if (reply.Last() == '_') reply = reply.Remove(reply.Length - 1, 1);
+
+            // Anti ETH discord trolling clause
             if (reply.Contains("<@&895231323034222593>")) await ReplyAsync("no");
+            
             else await ReplyAsync("https://www.poewiki.net/wiki/" + reply);
             
         }
