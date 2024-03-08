@@ -90,7 +90,7 @@ namespace TalosBot.Modules
                         if(currDateTime - thenTime < 3600) // If less than 3600 seconds have passed from oldest entry
                         {
                             var nextFish = thenTime + 3600;
-                            await ReplyAsync($"<@{user.Id}>, you are on cooldown! You may only fish eight times per hour. You may fish again at <t:{nextFish}:t>.");
+                            await ReplyAsync($"<@{user.Id}>, you are on cooldown! You may only fish eight times per hour. You may fish again <t:{nextFish}:R>.");
                             return;
                         }
 
@@ -513,7 +513,7 @@ namespace TalosBot.Modules
                 }
             }
 
-            
+
             var embed = new EmbedBuilder()
             .WithColor(Color.Blue)
             .WithFooter("Invoked by " + Context.User.Username)
