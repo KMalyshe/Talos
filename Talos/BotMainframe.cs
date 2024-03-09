@@ -30,7 +30,7 @@ namespace TalosBot
                 .AddSingleton(_commands)
                 .BuildServiceProvider();
 
-            string token = File.ReadAllText(@"C:\TalosFiles\token.txt");
+            string token = File.ReadAllText(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @"TalosFiles\token.txt"));
 
             _client.Log += _client_Log;
 
