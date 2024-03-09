@@ -6,3 +6,4 @@ obj
 PublishProfiles
 .config/dotnet-tools.json
 TalosFiles/
+token.txt
