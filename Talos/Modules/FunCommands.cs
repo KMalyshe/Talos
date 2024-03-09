@@ -49,7 +49,7 @@ namespace TalosBot.Modules
             else user = Context.User;
 
             //Check cooldown data table
-            using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
+            using (var connection = new SqliteConnection(@"Data Source=" + Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @"TalosFiles\SQL\fish.db")))
             {
                 //Fetch all cooldown entries for user
                 connection.Open();
@@ -229,7 +229,7 @@ namespace TalosBot.Modules
                 // Heart of the Depths
                 var heart = rnd.Next(100);
 
-                var filename = Path.GetFileName(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png");
+                var filename = Path.GetFileName(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @$"TalosFiles\fishes\fishes\icons\{path}.png"));
 
                 if (heart < 5) // If heart of the depths has been found, not sure if i can make the if statement smaller, AddField is weird
                 {
@@ -249,7 +249,7 @@ namespace TalosBot.Modules
                     command.ExecuteNonQuery();
                     command.Parameters.Clear();
 
-                    await Context.Channel.SendFileAsync(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png", null, false, embedder);
+                    await Context.Channel.SendFileAsync(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @$"TalosFiles\fishes\fishes\icons\{path}.png"), null, false, embedder);
                 }
                 else
                 {
@@ -260,7 +260,7 @@ namespace TalosBot.Modules
                     .WithImageUrl($"attachment://{filename}")
                     .WithFooter("Invoked by " + user.Username)
                     .Build();
-                    await Context.Channel.SendFileAsync(@$"C:\TalosFiles\fishes\fishes\icons\{path}.png", null, false, embedder);
+                    await Context.Channel.SendFileAsync(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @$"TalosFiles\fishes\fishes\icons\{path}.png"), null, false, embedder);
                 }
             }
             
@@ -272,7 +272,7 @@ namespace TalosBot.Modules
 
         public async Task fishCollection(string tier = "all", SocketUser? user = null)
         {
-            using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
+            using (var connection = new SqliteConnection(@"Data Source=" + Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @"TalosFiles\SQL\fish.db")))
             {
                 var fishAmounts = new Dictionary<string, int>();
                 connection.Open();
@@ -435,7 +435,7 @@ namespace TalosBot.Modules
             var score = 0;
 
 
-            using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
+            using (var connection = new SqliteConnection(@"Data Source=" + Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @"TalosFiles\SQL\fish.db")))
             {
                 connection.Open();
                 var command = connection.CreateCommand();
@@ -491,7 +491,7 @@ namespace TalosBot.Modules
 
 
             var str = "";
-            using (var connection = new SqliteConnection(@"Data Source=C:\TalosFiles\SQL\fish.db"))
+            using (var connection = new SqliteConnection(@"Data Source=" + Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @"TalosFiles\SQL\fish.db")))
             {
                 connection.Open();
                 var command = connection.CreateCommand();

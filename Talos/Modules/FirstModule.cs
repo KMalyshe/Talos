@@ -36,7 +36,7 @@ namespace TalosBot.Modules
             var searchOptionChosen = rng.Next(searchOptions.Length);
             string actualSearch = searchOptions[searchOptionChosen];
             var url = "https://tenor.googleapis.com/v2/search?q=" + actualSearch + "&key=" + 
-            File.ReadAllText(@"C:\TalosFiles\tenortoken.txt") + "&client_key=talosbot&limit=10&media_filter=gif,tinygif";
+            File.ReadAllText(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @"TalosFiles\tenortoken.txt")) + "&client_key=talosbot&limit=10&media_filter=gif,tinygif";
 
             // Fetch gif from Tenor based on search url
             using (var client = new HttpClient())
@@ -60,7 +60,7 @@ namespace TalosBot.Modules
                     var resultOptionChosen = rng.Next(urlResults.Count);
 
                     // Add catpost to log
-                    await File.AppendAllTextAsync(@"C:\TalosFiles\catlog.txt", DateTime.Now + " " + user.Username + 
+                    await File.AppendAllTextAsync(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @"TalosFiles\catlog.txt"), DateTime.Now + " " + user.Username + 
                     ": Search Option: " + searchOptions[searchOptionChosen] + " Result Option: " + resultOptionChosen + Environment.NewLine);
 
                     await ReplyAsync(urlResults[resultOptionChosen].url);
@@ -114,7 +114,7 @@ namespace TalosBot.Modules
         public async Task shutDown()
         {
             var author = Context.Message.Author;
-            if (author.Id != ulong.Parse(File.ReadAllText(@"C:\TalosFiles\myid.txt"))) await ReplyAsync("no");
+            if (author.Id != ulong.Parse(File.ReadAllText(Path.Combine(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName, @"TalosFiles\myid.txt")))) await ReplyAsync("no");
             else 
             {
                 await ReplyAsync("Shutting down.");
