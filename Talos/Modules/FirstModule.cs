@@ -19,6 +19,32 @@ namespace TalosBot.Modules
         {
             await ReplyAsync("pong");
         }
+
+        [Command("dog")]
+        // i hate this, lazy implementation for a friend
+        public async Task dogPosting()
+        {
+            string[] gifOptions = [
+                "https://tenor.com/view/what-da-dog-doin-what-da-dog-doin-gif-22078277",
+                "https://tenor.com/view/bobawooyo-dog-confused-dog-huh-dog-meme-shocked-dog-gif-16713203299056947073",
+                "https://tenor.com/view/harvest-yeahilif-gif-21827635",
+                "https://tenor.com/view/the-harvest-is-lacking-this-year-harvest-lacking-dog-what-the-dog-doin-gif-21904000",
+                "https://tenor.com/view/bubble-dog-chihuahua-rat-dog-bubble-dog-gif-20658904",
+                "https://tenor.com/view/dog-smirk-dog-smirking-evil-gif-1174039551531775064",
+                "https://tenor.com/view/doggy-golde-retriever-gif-6626272048167568250",
+                "https://tenor.com/view/dog-dog-with-butterfly-on-nose-dog-with-butterfly-butterfly-gif-13282441872748349107",
+                "https://tenor.com/view/phone-dog-dog-phone-hello-dog-calling-gif-4537530900414073988",
+                "https://tenor.com/view/look-at-aurum-dog-aurum-so-cute-gif-4637197256753416402",
+                "https://tenor.com/view/dog-hell-nah-hell-naw-button-gif-658894236480786400",
+                "https://tenor.com/view/byuntear-meme-react-funny-dog-gif-25019867",
+                "https://tenor.com/view/dog-gif-22639799",
+                "https://tenor.com/view/kleyton-loko-gif-216549716130789892",
+                "https://tenor.com/view/splooshysploosher-funny-dog-doge-doge-stare-dog-look-gif-26301702",
+                "https://tenor.com/view/dog-slap-punch-fast-gif-5113397"
+            ];
+            Random rng = new Random();
+            await ReplyAsync(gifOptions[rng.Next(gifOptions.Length)]);
+        }
         public class UrlResult
         {
             public string url { get; set; }
