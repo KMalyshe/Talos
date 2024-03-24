@@ -21,7 +21,7 @@ namespace TalosBot.Modules
         }
 
         [Command("dog")]
-        // i hate this, lazy implementation for a friend
+        // i hate this, lazy implementation for a friend;
         public async Task dogPosting()
         {
             string[] gifOptions = [
