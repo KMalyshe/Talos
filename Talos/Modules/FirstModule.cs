@@ -20,7 +20,7 @@ namespace TalosBot.Modules
             await ReplyAsync("pong");
         }
 
-        [Command("dog")]
+        [Command("cat")]
         // i hate this, lazy implementation for a friend;
         public async Task dogPosting()
         {
@@ -49,7 +49,7 @@ namespace TalosBot.Modules
         {
             public string url { get; set; }
         }
-        [Command("cat")]
+        [Command("dog")]
         public async Task catPosting(SocketUser user = null)
         {
             Random rng = new Random();
