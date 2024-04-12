@@ -50,6 +50,7 @@ namespace TalosBot.Modules
             public string url { get; set; }
         }
         [Command("cat")]
+        [Alias ("katze", "gato", "miv")]
         public async Task catPosting(SocketUser user = null)
         {
             Random rng = new Random();
