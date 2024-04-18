@@ -57,6 +57,7 @@ namespace TalosBot.Modules
             // List of search options, handpicked, cat+Letter is in twice to make sure a specific letter isnt highly unlikely
             string[] searchOptions = ["cat-" + (char) (65 + rng.Next(25)), "this-cat-is-so", "cat-eepy", "cat-caption", "cat", "cat-goofy", "cat-voices", 
             "cat-crazy", "cat-stare", "but-heres-the", "cat-angry", "post-this-cat", "kitten",
+            "cat-cute", "white-cat", "black-cat", "tabby-cat", "rage-cat",
             "orange-cat", "cat-meme", "cat-punch", "cat-smack", "cat-slap", "cat-crime",
             "angry-kitten", "cat-kitten", "cat-dance", "cat-skateboard", "cat-drive", "cat-meow", "cat-" + (char) (65 + rng.Next(25))];
 
